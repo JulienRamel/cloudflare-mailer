@@ -1,0 +1,49 @@
+{
+    "name": "julienramel/cloudflare-mailer",
+    "type": "symfony-mailer-bridge",
+    "description": "Symfony Mailer bridge for Cloudflare Email Service",
+    "keywords": ["cloudflare", "email", "mailer", "symfony", "transport", "email-service", "transactional"],
+    "homepage": "https://github.com/julienramel/cloudflare-mailer",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Julien Ramel",
+            "email": "julien@ramel.io",
+            "homepage": "https://github.com/julienramel"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "symfony/mailer": "^6.4|^7.0|^8.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpunit/phpunit": "^11.0",
+        "symfony/event-dispatcher": "^6.4|^7.0|^8.0",
+        "symfony/http-client": "^6.4|^7.0|^8.0"
+    },
+    "support": {
+        "issues": "https://github.com/julienramel/cloudflare-mailer/issues",
+        "source": "https://github.com/julienramel/cloudflare-mailer"
+    },
+    "autoload": {
+        "psr-4": {
+            "JulienRamel\\CloudflareMailer\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JulienRamel\\CloudflareMailer\\Tests\\": "Tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
+}
