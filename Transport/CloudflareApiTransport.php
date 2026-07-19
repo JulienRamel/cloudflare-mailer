@@ -21,7 +21,6 @@ use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractApiTransport;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -226,7 +225,7 @@ final class CloudflareApiTransport extends AbstractApiTransport
                 // Content-ID is an IdentificationHeader, not a ParameterizedHeader (unlike Content-Disposition
                 // and Content-Type) - reading it via getHeaderParameter() throws a LogicException. DataPart
                 // exposes the CID directly, so read it from there instead of parsing the header.
-                $rawContentId = ($attachment instanceof DataPart && $attachment->hasContentId())
+                $rawContentId = $attachment->hasContentId()
                     ? $attachment->getContentId()
                     : $preparedHeaders->getHeaderParameter('Content-Type', 'name');
                 if ($rawContentId) {
