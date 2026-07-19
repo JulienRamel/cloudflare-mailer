@@ -401,6 +401,43 @@ class CloudflareApiTransportTest extends TestCase
         $transport->send($email);
     }
 
+    public function testInlineImageWithRealSymfonyContentIdIsSent(): void
+    {
+        // Mirrors how Symfony\Bridge\Twig\Mime\WrappedTemplatedEmail::image() actually embeds an
+        // image: it calls DataPart::getContentId(), which generates and caches a real Content-ID
+        // (an IdentificationHeader, not a ParameterizedHeader). Reading it back via
+        // getHeaderParameter('Content-ID', 'id') throws a LogicException - this test guards against
+        // that regression, which the string "@images/logo.png"-style test above does not catch
+        // because it never calls getContentId().
+        $client = new MockHttpClient(function (string $method, string $url, array $options): ResponseInterface {
+            $body = json_decode($options['body'], true);
+
+            self::assertCount(1, $body['attachments']);
+            $attachment = $body['attachments'][0];
+
+            self::assertSame('inline', $attachment['disposition']);
+            self::assertNotEmpty($attachment['content_id']);
+            self::assertStringContainsString('cid:'.$attachment['content_id'], $body['html']);
+
+            return $this->successResponse(['to@example.com']);
+        });
+
+        $transport = new CloudflareApiTransport('ACCOUNT_ID', 'API_TOKEN', $client);
+
+        $image = new DataPart('fake-png-content', 'logo.png', 'image/png', 'base64');
+        $image->asInline();
+        $cid = $image->getContentId();
+
+        $email = (new Email())
+            ->from('from@example.com')
+            ->to('to@example.com')
+            ->subject('Inline image test')
+            ->html('<img src="cid:'.$cid.'" alt="logo">')
+            ->addPart($image);
+
+        $transport->send($email);
+    }
+
     public function testSendQueued(): void
     {
         $client = new MockHttpClient(fn () => new JsonMockResponse([
